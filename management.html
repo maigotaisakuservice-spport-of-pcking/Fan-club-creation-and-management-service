@@ -1,21 +1,121 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- ... (変更なし) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理ページ - FanCru</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* ... (既存のスタイルは変更なし) ... */
-        /* ★新規追加: 埋め込みコード選択用のスタイル */
+        .style-editor-group { border: 1px solid #eee; padding: 1rem; margin-top: 1rem; border-radius: 5px; }
+        .style-editor-group h5 { margin-top: 0; }
+        .style-editor-group label { display: block; margin-top: 0.5rem; }
+        .layout-editor-container { list-style: none; padding: 10px; background-color: #f0f0f0; border-radius: 5px; }
+        .layout-block { background-color: white; padding: 10px; border: 1px solid #ccc; margin-bottom: 5px; cursor: move; }
         .embed-options { margin-bottom: 0.5rem; }
         .embed-options label { margin-right: 1rem; }
     </style>
 </head>
 <body>
-    <header> <!-- ... (変更なし) ... --> </header>
+    <header>
+        <h1><a href="index.html">FanCru</a></h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="logout-button">ログアウト</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <main>
-        <!-- ... (変更なし) ... -->
+        <section id="create-club-section" style="display: none;">
+            <h2>あなたのファンクラブを作成しましょう</h2>
+            <form id="create-club-form">
+                <input type="text" id="club-name-input" placeholder="ファンクラブ名を入力" required>
+                <button type="submit">作成する</button>
+            </form>
+        </section>
+
         <div id="manage-club-section" style="display: none;">
             <h2>ファンクラブ管理</h2>
-            <!-- ... (変更なし) ... -->
+
+            <section id="lottery-management">
+                <h3>月次抽選</h3>
+                <p>現在の応募者数: <span id="applicant-count">0</span>名</p>
+                <button id="run-lottery-button">抽選を実行する</button>
+            </section>
+
+            <section id="page-editor">
+                <h3>ページデザイン編集</h3>
+                <form id="style-editor-form">
+                    <div class="style-editor-group">
+                        <h5>公開エリアのデザイン</h5>
+                        <label for="public-bg-color">背景色:</label>
+                        <input type="color" id="public-bg-color" value="#FFFFFF">
+                        <label for="public-text-color">文字色:</label>
+                        <input type="color" id="public-text-color" value="#333333">
+                        <label for="public-bg-image">背景画像URL (任意):</label>
+                        <input type="url" id="public-bg-image" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="style-editor-group">
+                        <h5>会員限定エリアのデザイン</h5>
+                        <label for="member-bg-color">背景色:</label>
+                        <input type="color" id="member-bg-color" value="#F0F0F0">
+                        <label for="member-text-color">文字色:</label>
+                        <input type="color" id="member-text-color" value="#333333">
+                        <label for="member-bg-image">背景画像URL (任意):</label>
+                        <input type="url" id="member-bg-image" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <br>
+                    <button type="submit">デザインを保存</button>
+                </form>
+                <hr>
+                <h4>レイアウト編集</h4>
+                <p>各エリアのコンテンツブロックをドラッグ＆ドロップで並べ替えられます。</p>
+                <div class="style-editor-group">
+                    <h5>公開エリアのレイアウト</h5>
+                    <ul id="public-layout-editor" class="layout-editor-container">
+                        <li class="layout-block" data-block-id="announcement">お知らせ</li>
+                        <li class="layout-block" data-block-id="goods">グッズ販売</li>
+                    </ul>
+                </div>
+                <div class="style-editor-group">
+                    <h5>会員限定エリアのレイアウト</h5>
+                    <ul id="member-layout-editor" class="layout-editor-container">
+                        <li class="layout-block" data-block-id="video">限定動画</li>
+                        <li class="layout-block" data-block-id="posts">限定掲示板</li>
+                        <li class="layout-block" data-block-id="fan-board">ファン交流掲示板</li>
+                    </ul>
+                </div>
+                 <br>
+                <button type="button" id="save-layout-button">レイアウトを保存</button>
+            </section>
+
+            <section id="contents-management">
+                <h3>コンテンツ管理</h3>
+                <form id="video-form">
+                    <h4>限定動画の設定</h4>
+                    <p>YouTubeなどの埋め込みURLを登録してください。</p>
+                    <input type="url" id="video-url-input" placeholder="https://www.youtube.com/embed/your-video-id">
+                    <button type="submit">動画URLを保存</button>
+                </form>
+                <hr>
+                <form id="post-form">
+                    <h4>限定掲示板への投稿</h4>
+                    <textarea id="post-content-textarea" rows="5" placeholder="ファンへのお知らせを書きましょう"></textarea>
+                    <button type="submit">掲示板へ投稿</button>
+                </form>
+                <div id="latest-posts">
+                    <h4>最近の投稿</h4>
+                    <ul id="posts-list"></ul>
+                </div>
+            </section>
+
+            <section id="member-list">
+                <h3>当選者一覧</h3>
+                <ul id="winner-list-display">
+                    <li>ここに当選者のリストが表示されます</li>
+                </ul>
+            </section>
+
             <section id="embed-code">
                 <h3>埋め込みコード</h3>
                 <p>あなたのサイトにファンクラブへの導線を設置しましょう！</p>
@@ -29,7 +129,13 @@
             </section>
         </div>
     </main>
-    <footer> <!-- ... (変更なし) ... --> </footer>
-    <!-- ... (スクリプトは変更なし) ... -->
+
+    <footer>
+        <p>© 2025 TekipakiPC</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="management.js"></script>
 </body>
 </html>

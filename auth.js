@@ -2,7 +2,8 @@
 import { auth, db } from './firebase-init.js';
 import {
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import {
     doc,
@@ -12,6 +13,7 @@ import {
 
 const signupForm = document.getElementById('signup-form');
 const loginForm = document.getElementById('login-form');
+const passwordResetForm = document.getElementById('password-reset-form');
 
 // 新規登録フォームの処理 (signup.htmlにのみ存在する)
 if (signupForm) {
@@ -36,6 +38,22 @@ if (signupForm) {
 
         } catch (error) {
             alert('新規登録に失敗しました: ' + error.message);
+        }
+    });
+}
+
+// パスワードリセットフォームの処理 (password-reset.htmlにのみ存在する)
+if (passwordResetForm) {
+    passwordResetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reset-email').value;
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert('パスワードリセット用のメールを送信しました。受信トレイをご確認ください。');
+            window.location.href = 'login.html';
+        } catch (error) {
+            alert('メールの送信に失敗しました: ' + error.message);
         }
     });
 }
