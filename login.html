@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン / 新規登録 - FanCru</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">FanCru</a></h1>
+    </header>
+
+    <main>
+        <div id="auth-form-container">
+            <h2>ログイン</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="メールアドレス" required>
+                <input type="password" id="login-password" placeholder="パスワード" required>
+                <button type="submit">ログイン</button>
+            </form>
+
+            <hr>
+
+            <h2>新規登録</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="メールアドレス" required>
+                <input type="password" id="signup-password" placeholder="パスワード" required>
+                <div>
+                    <input type="radio" id="role-creator" name="role" value="creator" checked>
+                    <label for="role-creator">YouTuber (ファンクラブを作成)</label>
+                </div>
+                <div>
+                    <input type="radio" id="role-fan" name="role" value="fan">
+                    <label for="role-fan">ファン (ファンクラブに参加)</label>
+                </div>
+                <button type="submit">新規登録</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 TekipakiPC</p>
+    </footer>
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

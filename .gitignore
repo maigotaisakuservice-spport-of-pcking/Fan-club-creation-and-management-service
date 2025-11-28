@@ -1,0 +1,4 @@
+# .gitignore
+
+# Firebaseの機密設定ファイルを無視する
+firebase-config.js

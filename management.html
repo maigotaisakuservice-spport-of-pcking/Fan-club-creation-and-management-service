@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- ... (変更なし) ... -->
+    <style>
+        /* ... (既存のスタイルは変更なし) ... */
+        /* ★新規追加: 埋め込みコード選択用のスタイル */
+        .embed-options { margin-bottom: 0.5rem; }
+        .embed-options label { margin-right: 1rem; }
+    </style>
+</head>
+<body>
+    <header> <!-- ... (変更なし) ... --> </header>
+    <main>
+        <!-- ... (変更なし) ... -->
+        <div id="manage-club-section" style="display: none;">
+            <h2>ファンクラブ管理</h2>
+            <!-- ... (変更なし) ... -->
+            <section id="embed-code">
+                <h3>埋め込みコード</h3>
+                <p>あなたのサイトにファンクラブへの導線を設置しましょう！</p>
+                <div class="embed-options">
+                    <input type="radio" id="embed-type-link" name="embed-type" value="link" checked>
+                    <label for="embed-type-link">シンプルリンク</label>
+                    <input type="radio" id="embed-type-button" name="embed-type" value="button">
+                    <label for="embed-type-button">デザインボタン</label>
+                </div>
+                <textarea id="embed-code-textarea" readonly rows="4"></textarea>
+            </section>
+        </div>
+    </main>
+    <footer> <!-- ... (変更なし) ... --> </footer>
+    <!-- ... (スクリプトは変更なし) ... -->
+</body>
+</html>
