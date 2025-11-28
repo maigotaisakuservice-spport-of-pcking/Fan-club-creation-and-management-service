@@ -97,7 +97,7 @@ async function updateUser(user) {
             actionButton.onclick = applyForLottery;
         }
     } else {
-        authLink.textContent = 'ログイン / 新規登録';
+        authLink.textContent = 'ログイン';
         actionButton.textContent = '抽選に参加するにはログインしてください';
         actionButton.onclick = () => window.location.href = 'login.html';
     }

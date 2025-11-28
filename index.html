@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FanCru - ファンコミュニティ作成サービス</title>
+    <title>FanCru - 新しい形のファンコミュニティ作成サービス</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>FanCru</h1>
+        <h1><a href="index.html">FanCru</a></h1>
         <nav>
             <ul>
-                <li><a href="index.html">ホーム</a></li>
-                <li><a href="login.html">ログイン / 新規登録</a></li>
+                <li><a href="#how-it-works">仕組み</a></li>
+                <li><a href="#faq">よくある質問</a></li>
+                <li><a href="login.html">ログイン</a></li>
+                <li><a href="signup.html" class="cta-button">新規登録</a></li>
             </ul>
         </nav>
     </header>
@@ -20,18 +22,71 @@
     <main>
         <section id="hero">
             <h2>新しい形のファンコミュニティを、もっと手軽に。</h2>
-            <p>FanCruは、YouTuberやクリエイターのための月次抽選式ファンコミュニティ作成サービスです。</p>
-            <a href="login.html" class="cta-button">さっそくはじめる</a>
+            <p>FanCruは、月次抽選式のファンコミュニティを、驚くほど自由にデザインして作成できるサービスです。</p>
+            <a href="signup.html" class="cta-button">さっそくはじめる (無料)</a>
         </section>
 
-        <section id="features">
-            <h3>FanCruの主な機能</h3>
-            <ul>
-                <li>Wixのような直感的なページ編集機能</li>
-                <li>公平な月次抽選システム</li>
-                <li>限定コンテンツでファンとの絆を深める</li>
-            </ul>
+        <!-- ★新規追加: FanCruの仕組みセクション -->
+        <section id="how-it-works">
+            <h2>FanCruの仕組み</h2>
+            <div class="flow-container">
+                <div class="flow-for-creators">
+                    <h3>クリエイターの方</h3>
+                    <ol>
+                        <li><span>1</span> 無料でアカウント登録</li>
+                        <li><span>2</span> Wixのようなエディタでファンページを自由にデザイン</li>
+                        <li><span>3</span> 限定動画や掲示板のコンテンツを設定</li>
+                        <li><span>4</span> あなたのサイトやSNSにコミュニティへのリンクを貼ってファンを招待！</li>
+                    </ol>
+                </div>
+                <div class="flow-for-fans">
+                    <h3>ファンの方</h3>
+                    <ol>
+                        <li><span>1</span> 応援したいコミュニティを見つける</li>
+                        <li><span>2</span> 無料でアカウント登録し、抽選に参加</li>
+                        <li><span>3</span> 毎月の抽選に当選すると、1ヶ月間限定エリアにアクセス可能に！</li>
+                        <li><span>4</span> 限定コンテンツやファン同士の交流を楽しもう！</li>
+                    </ol>
+                </div>
+            </div>
         </section>
+
+        <!-- ★新規追加: クリエイターのメリットセクション -->
+        <section id="benefits">
+            <h2>あなたの「好き」を表現しよう</h2>
+            <div class="benefit-cards">
+                <div class="card">
+                    <h3>完全無料</h3>
+                    <p>初期費用・月額費用は一切かかりません。リスクなく、あなたのファンコミュニティを始められます。</p>
+                </div>
+                <div class="card">
+                    <h3>自由なデザイン</h3>
+                    <p>Wixのような直感的なエディタで、背景色からコンテンツの配置まで、あなただけの空間を自由に作り上げることができます。</p>
+                </div>
+                <div class="card">
+                    <h3>新しいエンゲージメント</h3>
+                    <p>月次抽選という新しい形で、ファンとの間に特別な一体感と継続的なワクワク感を生み出します。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ★新規追加: よくある質問セクション -->
+        <section id="faq">
+            <h2>よくある質問 (FAQ)</h2>
+            <div class="faq-item">
+                <h4>Q. 本当にずっと無料で使えますか？</h4>
+                <p>A. はい。FanCruの基本的な機能は、クリエイター・ファン共に永年無料でご利用いただけます。将来的により高度な機能を持つ有料プランを提供する可能性はありますが、基本的な機能が有料になることはありません。</p>
+            </div>
+            <div class="faq-item">
+                <h4>Q. 抽選はどのように行われますか？</h4>
+                <p>A. 毎月1回、コミュニティのオーナー（クリエイター）が管理画面から好きなタイミングで抽選を実行できます。応募者の中から、設定した当選者数がランダムで選ばれます。</p>
+            </div>
+            <div class="faq-item">
+                <h4>Q. どんなコンテンツを載せられますか？</h4>
+                <p>A. YouTubeやVimeoなどの動画埋め込み、ファンへのお知らせを投稿できる限定掲示板、ファン同士が交流できる掲示板などを自由に配置できます。</p>
+            </div>
+        </section>
+
     </main>
 
     <footer>

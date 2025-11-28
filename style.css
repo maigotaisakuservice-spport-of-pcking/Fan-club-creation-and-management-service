@@ -102,3 +102,76 @@ footer {
     margin-top: 2rem;
     color: #777;
 }
+
+/* --- index.html 専用スタイル --- */
+
+/* ヒーローセクション */
+#hero {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+#hero h2 {
+    font-size: 2.5rem;
+}
+
+/* 仕組みセクション */
+#how-it-works .flow-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+}
+#how-it-works .flow-for-creators,
+#how-it-works .flow-for-fans {
+    width: 48%;
+    background: #fdfaf6;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+#how-it-works ol {
+    list-style: none;
+    padding-left: 0;
+}
+#how-it-works li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+#how-it-works li span {
+    background-color: #e67e22;
+    color: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* メリットセクション */
+#benefits .benefit-cards {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    text-align: center;
+}
+#benefits .card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    width: 30%;
+}
+
+/* FAQセクション */
+#faq .faq-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+}
+#faq .faq-item:last-child {
+    border-bottom: none;
+}
+#faq h4 {
+    margin-bottom: 0.5rem;
+}

@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- ... (変更なし) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ファンクラブページ - FanCru</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header> <!-- ... (変更なし) ... --> </header>
+    <header>
+        <h1><a href="index.html">FanCru</a></h1>
+        <nav>
+            <ul>
+                <!-- 修正箇所: リンク先をlogin.htmlに、テキストを「ログイン」に -->
+                <li><a href="login.html" id="auth-link">ログイン</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <main id="club-page">
         <!-- 公開エリア -->
         <section id="public-area">
             <h2 id="club-name">読み込み中...</h2>
             <div id="public-contents-container">
-                <!-- ↓JavaScriptによって並べ替えられるブロック↓ -->
                 <div data-block-id="announcement">
                     <h3>お知らせ</h3>
                     <p>会員になると、限定動画や掲示板を閲覧できます！</p>
@@ -27,7 +38,6 @@
         <section id="member-area" style="display: none;">
             <h2>会員限定エリア</h2>
             <div id="member-contents-container">
-                <!-- ↓JavaScriptによって並べ替えられるブロック↓ -->
                 <div data-block-id="video">
                     <h3>限定動画</h3>
                     <div id="video-container"></div>
@@ -44,9 +54,14 @@
             <button id="show-public-area-button">公開エリアへ戻る</button>
         </section>
 
-        <!-- ... (エラー表示、フッター、スクリプトは変更なし) ... -->
+        <!-- エラー表示用のセクション -->
+        <section id="error-section" style="display: none; color: red;"></section>
     </main>
-    <footer> <!-- ... (変更なし) ... --> </footer>
+
+    <footer>
+        <p>© 2025 TekipakiPC</p>
+    </footer>
+
     <script type="module" src="firebase-init.js"></script>
     <script type="module" src="club.js"></script>
 </body>
