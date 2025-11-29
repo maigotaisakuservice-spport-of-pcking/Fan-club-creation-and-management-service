@@ -110,9 +110,11 @@ onAuthStateChanged(auth, async (user) => {
             if (clubDocSnap.exists()) showManagementPanel(user.uid);
             else createClubSection.style.display = 'block';
         } else {
+            // TODO: alertをより良いUI（例: ページ全体にエラー表示）に置き換える
             alert("アクセス権限がありません。"); window.location.href = 'index.html';
         }
     } else {
+        // TODO: alertをより良いUI（例: ページ全体にエラー表示）に置き換える
         alert("ログインしてください。"); window.location.href = 'login.html';
     }
 });
@@ -125,29 +127,44 @@ createClubForm.addEventListener('submit', async (e) => {
     if (!clubName || !user) return;
     try {
         await setDoc(doc(db, "fanclubs", user.uid), { name: clubName, ownerId: user.uid, createdAt: serverTimestamp(), winners: [] });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert(`ファンクラブ「${clubName}」を作成しました！`);
         showManagementPanel(user.uid);
-    } catch (error) { alert("作成に失敗しました。"); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert("作成に失敗しました。");
+    }
 });
 
 runLotteryButton.addEventListener('click', async () => {
     const user = auth.currentUser;
+    // TODO: promptをより良いUI（例: モーダルウィンドウ）に置き換える
     const numStr = prompt("何名の当選者を選びますか？", "10");
     const num = parseInt(numStr, 10);
-    if (!user || isNaN(num) || num <= 0) return alert("有効な数値を入力してください。");
+    if (!user || isNaN(num) || num <= 0) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        return alert("有効な数値を入力してください。");
+    }
     const applicantsColRef = collection(db, `fanclubs/${user.uid}/applicants`);
     const applicantsSnapshot = await getDocs(applicantsColRef);
     const applicants = applicantsSnapshot.docs.map(d => d.id);
-    if (applicants.length === 0) return alert("応募者がいません。");
+    if (applicants.length === 0) {
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
+        return alert("応募者がいません。");
+    }
     const winners = applicants.sort(() => 0.5 - Math.random()).slice(0, num);
     try {
         await updateDoc(doc(db, "fanclubs", user.uid), { winners: winners });
         const batch = writeBatch(db);
         applicantsSnapshot.forEach(d => batch.delete(d.ref));
         await batch.commit();
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert("抽選が完了しました！");
         updateManagementPanel(user.uid);
-    } catch (error) { alert("抽選処理に失敗しました。"); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
+        alert("抽選処理に失敗しました。");
+    }
 });
 
 videoForm.addEventListener('submit', async (e) => {
@@ -156,8 +173,12 @@ videoForm.addEventListener('submit', async (e) => {
     if (!user) return;
     try {
         await updateDoc(doc(db, "fanclubs", user.uid), { videoUrl: videoUrlInput.value });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert('動画URLを保存しました。');
-    } catch (error) { alert('保存に失敗しました。'); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert('保存に失敗しました。');
+    }
 });
 
 postForm.addEventListener('submit', async (e) => {
@@ -167,10 +188,14 @@ postForm.addEventListener('submit', async (e) => {
     if (!user || !content) return;
     try {
         await addDoc(collection(db, `fanclubs/${user.uid}/posts`), { content, createdAt: serverTimestamp() });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert('投稿しました。');
         postContentTextarea.value = '';
         updateManagementPanel(user.uid);
-    } catch (error) { alert('投稿に失敗しました。'); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert('投稿に失敗しました。');
+    }
 });
 
 styleEditorForm.addEventListener('submit', async (e) => {
@@ -183,8 +208,12 @@ styleEditorForm.addEventListener('submit', async (e) => {
     };
     try {
         await updateDoc(doc(db, "fanclubs", user.uid), { styles });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert('デザインを保存しました。');
-    } catch (error) { alert('保存に失敗しました。'); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert('保存に失敗しました。');
+    }
 });
 
 saveLayoutButton.addEventListener('click', async () => {
@@ -194,8 +223,12 @@ saveLayoutButton.addEventListener('click', async () => {
     const layout = { public: getOrder(publicLayoutEditor), member: getOrder(memberLayoutEditor) };
     try {
         await updateDoc(doc(db, "fanclubs", user.uid), { layout });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert('レイアウトを保存しました。');
-    } catch (error) { alert('保存に失敗しました。'); }
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert('保存に失敗しました。');
+    }
 });
 
 embedTypeRadios.forEach(radio => radio.addEventListener('change', generateEmbedCode));

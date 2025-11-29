@@ -20,6 +20,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative; /* ハンバーガーメニューの基準位置 */
 }
 
 header h1 {
@@ -31,10 +32,11 @@ header h1 a {
     color: #333;
 }
 
-header nav ul {
+header nav .nav-links {
     list-style: none;
     display: flex;
     gap: 1rem;
+    align-items: center;
 }
 
 header nav a {
@@ -42,6 +44,31 @@ header nav a {
     color: #555;
     font-weight: bold;
 }
+
+.hamburger-menu {
+    display: none; /* デスクトップでは非表示 */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+}
+
+.hamburger-menu span {
+    display: block;
+    width: 2rem;
+    height: 0.25rem;
+    background: #333;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+}
+
 
 /* メインコンテンツ */
 main {
@@ -89,10 +116,11 @@ form {
     gap: 1rem;
 }
 
-input[type="email"], input[type="password"] {
+input[type="text"], input[type="email"], input[type="password"], input[type="url"], textarea {
     padding: 0.8rem;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 100%;
 }
 
 /* フッター */
@@ -174,4 +202,74 @@ footer {
 }
 #faq h4 {
     margin-bottom: 0.5rem;
+}
+
+
+/* --- レスポンシブ対応 --- */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none; /* デフォルトでは非表示 */
+        flex-direction: column;
+        gap: 1.5rem;
+        background-color: white;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        border-top: 1px solid #eee;
+        padding: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .nav-links.active {
+        display: flex; /* JavaScriptで表示を切り替え */
+    }
+
+    header nav li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-links .cta-button {
+        display: block;
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    #hero h2 {
+        font-size: 2rem;
+    }
+
+    #how-it-works .flow-container,
+    #benefits .benefit-cards {
+        flex-direction: column;
+    }
+
+    #how-it-works .flow-for-creators,
+    #how-it-works .flow-for-fans,
+    #benefits .card {
+        width: 100%;
+    }
+
+    main {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    section {
+        padding: 1.5rem;
+    }
+
+    /* 認証フォーム */
+    #auth-form-container {
+        padding: 1rem;
+    }
 }

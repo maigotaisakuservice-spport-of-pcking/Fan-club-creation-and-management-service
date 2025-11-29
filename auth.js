@@ -33,10 +33,12 @@ if (signupForm) {
                 createdAt: new Date()
             });
 
+            // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
             alert('新規登録が完了しました！');
             window.location.href = (role === 'creator') ? 'management.html' : 'index.html';
 
         } catch (error) {
+            // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
             alert('新規登録に失敗しました: ' + error.message);
         }
     });
@@ -50,9 +52,11 @@ if (passwordResetForm) {
 
         try {
             await sendPasswordResetEmail(auth, email);
+            // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
             alert('パスワードリセット用のメールを送信しました。受信トレイをご確認ください。');
             window.location.href = 'login.html';
         } catch (error) {
+            // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
             alert('メールの送信に失敗しました: ' + error.message);
         }
     });
@@ -74,6 +78,7 @@ if (loginForm) {
 
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
+                // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
                 alert('ログインしました！');
                 if (userData.role === 'creator') {
                     window.location.href = 'management.html';
@@ -81,11 +86,13 @@ if (loginForm) {
                     window.location.href = 'index.html';
                 }
             } else {
+                // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
                 alert('ログインしました！ユーザー情報が見つかりませんでした。');
                 window.location.href = 'index.html';
             }
 
         } catch (error) {
+            // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
             alert('ログインに失敗しました: ' + error.message);
         }
     });
