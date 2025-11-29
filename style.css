@@ -69,6 +69,26 @@ header nav a {
     transform-origin: 1px;
 }
 
+/* ユーザーメニュー */
+#user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+#user-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #d35400; /* ヘッダーのボタンと色味を合わせる */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
 
 /* メインコンテンツ */
 main {

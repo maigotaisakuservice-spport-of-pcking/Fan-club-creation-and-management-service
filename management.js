@@ -10,7 +10,6 @@ import {
 const createClubSection = document.getElementById('create-club-section');
 const manageClubSection = document.getElementById('manage-club-section');
 const createClubForm = document.getElementById('create-club-form');
-const logoutButton = document.getElementById('logout-button');
 const runLotteryButton = document.getElementById('run-lottery-button');
 const applicantCountSpan = document.getElementById('applicant-count');
 const winnerListUl = document.getElementById('winner-list-display');
@@ -232,4 +231,3 @@ saveLayoutButton.addEventListener('click', async () => {
 });
 
 embedTypeRadios.forEach(radio => radio.addEventListener('change', generateEmbedCode));
-logoutButton.addEventListener('click', () => { signOut(auth); });

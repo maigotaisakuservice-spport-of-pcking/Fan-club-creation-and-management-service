@@ -16,7 +16,11 @@
                 <span></span>
             </button>
             <ul class="nav-links">
-                <li><a href="signup.html">新規登録</a></li>
+                <li id="nav-signup"><a href="signup.html">新規登録</a></li>
+                <li id="user-menu" style="display: none;">
+                    <div id="user-icon"></div>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -42,8 +46,8 @@
         <p>© 2025 TekipakiPC</p>
     </footer>
 
-    <script src="main.js"></script>
     <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="main.js"></script>
     <script type="module" src="auth.js"></script>
 </body>
 </html>

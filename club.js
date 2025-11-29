@@ -13,7 +13,6 @@ const memberArea = document.getElementById('member-area');
 const errorSection = document.getElementById('error-section');
 const actionButton = document.getElementById('action-button');
 const showPublicAreaButton = document.getElementById('show-public-area-button');
-const authLink = document.getElementById('auth-link');
 const videoContainer = document.getElementById('video-container');
 const postsContainer = document.getElementById('posts-container');
 const publicContentsContainer = document.getElementById('public-contents-container');
@@ -74,7 +73,6 @@ async function updateUser(user) {
     actionButton.disabled = false;
     actionButton.style.display = 'block';
     if (user) {
-        authLink.textContent = 'ログアウト';
         if (user.uid === clubId) {
             actionButton.textContent = '管理ページへ';
             actionButton.onclick = () => window.location.href = `management.html`;
@@ -97,7 +95,6 @@ async function updateUser(user) {
             actionButton.onclick = applyForLottery;
         }
     } else {
-        authLink.textContent = 'ログイン';
         actionButton.textContent = '抽選に参加するにはログインしてください';
         actionButton.onclick = () => window.location.href = 'login.html';
     }
@@ -143,9 +140,3 @@ function showError(message) {
 
 // イベントリスナー
 showPublicAreaButton.addEventListener('click', () => showMemberArea(false));
-authLink.addEventListener('click', (e) => {
-    if (authLink.textContent === 'ログアウト') {
-        e.preventDefault();
-        signOut(auth).then(() => window.location.reload());
-    }
-});

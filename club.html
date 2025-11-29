@@ -16,8 +16,11 @@
                 <span></span>
             </button>
             <ul class="nav-links">
-                <!-- 修正箇所: リンク先をlogin.htmlに、テキストを「ログイン」に -->
-                <li><a href="login.html" id="auth-link">ログイン</a></li>
+                <li id="nav-auth"><a href="login.html" id="auth-link">ログイン</a></li>
+                <li id="user-menu" style="display: none;">
+                    <div id="user-icon"></div>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -67,8 +70,8 @@
         <p>© 2025 TekipakiPC</p>
     </footer>
 
-    <script src="main.js"></script>
     <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="main.js"></script>
     <script type="module" src="club.js"></script>
 </body>
 </html>
