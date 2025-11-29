@@ -24,6 +24,9 @@ const memberLayoutEditor = document.getElementById('member-layout-editor');
 const saveLayoutButton = document.getElementById('save-layout-button');
 const embedCodeTextarea = document.getElementById('embed-code-textarea');
 const embedTypeRadios = document.querySelectorAll('input[name="embed-type"]');
+const goodsForm = document.getElementById('goods-form');
+const goodsUrlInput = document.getElementById('goods-url-input');
+const goodsMessageTextarea = document.getElementById('goods-message-textarea');
 
 let clubUrl = '';
 let publicSortable, memberSortable;
@@ -86,6 +89,14 @@ async function updateManagementPanel(uid) {
         const reorder = (container, order) => order.forEach(id => container.appendChild(container.querySelector(`[data-block-id="${id}"]`)));
         if (clubData.layout.public) reorder(publicLayoutEditor, clubData.layout.public);
         if (clubData.layout.member) reorder(memberLayoutEditor, clubData.layout.member);
+    }
+
+    // グッズ販売設定
+    if (clubData.goods) {
+        goodsUrlInput.value = clubData.goods.url || '';
+        goodsMessageTextarea.value = clubData.goods.message || '';
+        const displayMode = clubData.goods.displayMode || 'link';
+        document.querySelector(`input[name="goods-display-mode"][value="${displayMode}"]`).checked = true;
     }
 }
 
@@ -231,3 +242,25 @@ saveLayoutButton.addEventListener('click', async () => {
 });
 
 embedTypeRadios.forEach(radio => radio.addEventListener('change', generateEmbedCode));
+
+goodsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const goodsData = {
+        url: goodsUrlInput.value,
+        message: goodsMessageTextarea.value,
+        displayMode: document.querySelector('input[name="goods-display-mode"]:checked').value
+    };
+
+    try {
+        await updateDoc(doc(db, "fanclubs", user.uid), { goods: goodsData });
+        // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
+        alert('グッズ設定を保存しました。');
+    } catch (error) {
+        // TODO: alertをより良いUI（例: フォーム内のエラーメッセージ）に置き換える
+        alert('保存に失敗しました。');
+        console.error("Goods settings save error: ", error);
+    }
+});

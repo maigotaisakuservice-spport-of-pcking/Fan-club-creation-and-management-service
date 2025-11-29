@@ -17,6 +17,9 @@ const videoContainer = document.getElementById('video-container');
 const postsContainer = document.getElementById('posts-container');
 const publicContentsContainer = document.getElementById('public-contents-container');
 const memberContentsContainer = document.getElementById('member-contents-container');
+const goodsSection = document.querySelector('[data-block-id="goods"]');
+const goodsLink = document.getElementById('goods-link');
+const goodsMessage = document.getElementById('goods-message');
 
 // URLからクラブIDを取得
 const params = new URLSearchParams(window.location.search);
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             clubNameElement.textContent = `ようこそ！ ${clubData.name} のファンクラブへ`;
             applyCustomStyles(clubData.styles);
             applyCustomLayout(clubData.layout);
+            updateGoodsSection(clubData.goods); // ★追加
             onAuthStateChanged(auth, updateUser);
         } else {
             showError('指定されたファンクラブは存在しません。');
@@ -66,6 +70,34 @@ function applyCustomLayout(layout) {
     const reorder = (c, o) => o.forEach(id => c.appendChild(c.querySelector(`[data-block-id="${id}"]`)));
     if (layout.public) reorder(publicContentsContainer, layout.public);
     if (layout.member) reorder(memberContentsContainer, layout.member);
+}
+
+// グッズ販売セクションの更新
+function updateGoodsSection(goodsData) {
+    if (!goodsData || !goodsSection) return;
+
+    switch (goodsData.displayMode) {
+        case 'hide':
+            goodsSection.style.display = 'none';
+            break;
+        case 'message':
+            goodsSection.style.display = 'block';
+            goodsLink.style.display = 'none';
+            goodsMessage.style.display = 'block';
+            goodsMessage.textContent = goodsData.message || 'グッズは現在準備中です。';
+            break;
+        case 'link':
+        default:
+            goodsSection.style.display = 'block';
+            goodsMessage.style.display = 'none';
+            if (goodsData.url) {
+                goodsLink.style.display = 'block';
+                goodsLink.href = goodsData.url;
+            } else {
+                goodsLink.style.display = 'none'; // URLが空ならリンクも非表示
+            }
+            break;
+    }
 }
 
 // ユーザー状態に応じたページ更新

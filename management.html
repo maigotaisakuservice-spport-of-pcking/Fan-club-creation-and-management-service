@@ -117,6 +117,29 @@
                 </div>
             </section>
 
+            <section id="goods-management">
+                <h3>グッズ販売の設定</h3>
+                <form id="goods-form">
+                    <label for="goods-url-input">グッズ販売ページのURL:</label>
+                    <input type="url" id="goods-url-input" placeholder="https://example.com/shop">
+
+                    <p>ファンクラブページでの表示方法:</p>
+                    <div class="embed-options">
+                        <input type="radio" id="goods-display-link" name="goods-display-mode" value="link" checked>
+                        <label for="goods-display-link">リンクを表示</label>
+                        <input type="radio" id="goods-display-message" name="goods-display-mode" value="message">
+                        <label for="goods-display-message">メッセージを表示</label>
+                        <input type="radio" id="goods-display-hide" name="goods-display-mode" value="hide">
+                        <label for="goods-display-hide">セクションを非表示</label>
+                    </div>
+
+                    <label for="goods-message-textarea">表示するメッセージ (任意):</label>
+                    <textarea id="goods-message-textarea" rows="3" placeholder="グッズは現在準備中です！"></textarea>
+
+                    <button type="submit">グッズ設定を保存</button>
+                </form>
+            </section>
+
             <section id="member-list">
                 <h3>当選者一覧</h3>
                 <ul id="winner-list-display">
