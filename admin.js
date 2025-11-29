@@ -3,7 +3,7 @@ import { auth, db } from './firebase-init.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import {
     doc, getDoc, collection, getDocs, query, orderBy,
-    updateDoc, writeBatch, deleteDoc
+    updateDoc, writeBatch, deleteDoc, deleteField
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 const adminPage = document.getElementById('admin-page');
@@ -40,24 +40,46 @@ async function loadAllUsers() {
 
         userListTbody.innerHTML = '';
 
-        querySnapshot.forEach((doc) => {
-            const userData = doc.data();
-            const userId = doc.id;
+        for (const userDoc of querySnapshot.docs) {
+            const userData = userDoc.data();
+            const userId = userDoc.id;
 
-            let actionsHtml = `<button class="ban-user-btn" data-uid="${userId}">Ban User</button>`;
+            const isUserBanned = userData.ban && userData.ban.isBanned && new Date(userData.ban.expires) >= new Date();
+            let rowClass = isUserBanned ? 'banned' : '';
+
+            let userBanBtn = isUserBanned
+                ? `<button class="unban-user-btn" data-uid="${userId}">Unban User</button>`
+                : `<button class="ban-user-btn" data-uid="${userId}">Ban User</button>`;
+
+            let actionsHtml = userBanBtn;
+
             if (userData.role === 'creator') {
-                actionsHtml += `<button class="ban-club-btn" data-uid="${userId}">Ban Club</button>`;
+                const clubDocRef = doc(db, "fanclubs", userId);
+                const clubDocSnap = await getDoc(clubDocRef);
+                let clubBanBtn = '';
+
+                if (clubDocSnap.exists()) {
+                    const clubData = clubDocSnap.data();
+                    const isClubBanned = clubData.ban && clubData.ban.isBanned && new Date(clubData.ban.expires) >= new Date();
+                    if(isClubBanned) rowClass = 'banned'; // クラブがBANされていても行をハイライト
+
+                    clubBanBtn = isClubBanned
+                        ? `<button class="unban-club-btn" data-uid="${userId}">Unban Club</button>`
+                        : `<button class="ban-club-btn" data-uid="${userId}">Ban Club</button>`;
+                }
+
+                actionsHtml += clubBanBtn;
                 actionsHtml += `<button class="delete-club-btn" data-uid="${userId}">Delete Club</button>`;
             }
 
-            const row = `<tr>
+            const row = `<tr class="${rowClass}">
                             <td>${userData.email}</td>
                             <td>${userData.role}</td>
                             <td>${userId}</td>
                             <td>${actionsHtml}</td>
                         </tr>`;
             userListTbody.innerHTML += row;
-        });
+        }
     } catch (error) {
         console.error("Error loading users:", error);
         userListTbody.innerHTML = '<tr><td colspan="4">ユーザーの読み込みに失敗しました。</td></tr>';
@@ -92,9 +114,25 @@ async function handleBan(userId, type) {
     try {
         await updateDoc(docRef, { ban: banData });
         alert(`${type}をBANしました。`);
+        loadAllUsers();
     } catch (error) {
         alert("BAN処理中にエラーが発生しました。");
         console.error(`Error banning ${type}:`, error);
+    }
+}
+
+async function handleUnban(userId, type) {
+    if (!confirm(`本当にこの${type}のBANを解除しますか？`)) return;
+
+    const docRef = (type === 'user') ? doc(db, "users", userId) : doc(db, "fanclubs", userId);
+
+    try {
+        await updateDoc(docRef, { ban: deleteField() });
+        alert(`${type}のBANを解除しました。`);
+        loadAllUsers();
+    } catch (error) {
+        alert("BAN解除処理中にエラーが発生しました。");
+        console.error(`Error unbanning ${type}:`, error);
     }
 }
 
@@ -104,7 +142,6 @@ async function handleDeleteClub(creatorId) {
     try {
         const clubDocRef = doc(db, "fanclubs", creatorId);
 
-        // サブコレクションを削除 (例: posts, applicants)
         const subcollections = ['posts', 'applicants'];
         for (const sc of subcollections) {
             const scRef = collection(db, `fanclubs/${creatorId}/${sc}`);
@@ -114,11 +151,10 @@ async function handleDeleteClub(creatorId) {
             await batch.commit();
         }
 
-        // 親ドキュメントを削除
         await deleteDoc(clubDocRef);
 
         alert("ファンクラブを完全に削除しました。");
-        loadAllUsers(); // リストを再読み込み
+        loadAllUsers();
     } catch (error) {
         alert("削除処理中にエラーが発生しました。");
         console.error("Error deleting club:", error);
@@ -132,8 +168,12 @@ userListTbody.addEventListener('click', (e) => {
 
     if (target.classList.contains('ban-user-btn')) {
         handleBan(userId, 'user');
+    } else if (target.classList.contains('unban-user-btn')) {
+        handleUnban(userId, 'user');
     } else if (target.classList.contains('ban-club-btn')) {
         handleBan(userId, 'fanclub');
+    } else if (target.classList.contains('unban-club-btn')) {
+        handleUnban(userId, 'fanclub');
     } else if (target.classList.contains('delete-club-btn')) {
         handleDeleteClub(userId);
     }
