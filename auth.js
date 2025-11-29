@@ -3,7 +3,8 @@ import { auth, db } from './firebase-init.js';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    signOut
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import {
     doc,
@@ -78,6 +79,20 @@ if (loginForm) {
 
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
+
+                // BAN状態を確認
+                if (userData.ban && userData.ban.isBanned) {
+                    const expiryDate = new Date(userData.ban.expires);
+                    if (expiryDate >= new Date()) {
+                        // TODO: alertをより良いUI（例: モーダルウィンドウ）に置き換える
+                        alert(`あなたのアカウントはBANされています。\n理由: ${userData.ban.reason}\n期限: ${userData.ban.expires}\n\n5秒後に自動的にログアウトします。`);
+                        setTimeout(() => {
+                            signOut(auth);
+                        }, 5000);
+                        return; // ここで処理を中断
+                    }
+                }
+
                 // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
                 alert('ログインしました！');
                 if (userData.role === 'creator') {

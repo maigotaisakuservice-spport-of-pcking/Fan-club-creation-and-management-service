@@ -34,10 +34,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const clubDocSnap = await getDoc(clubDocRef);
         if (clubDocSnap.exists()) {
             clubData = clubDocSnap.data();
+
+            // BAN状態を確認
+            if (clubData.ban && clubData.ban.isBanned) {
+                const expiryDate = new Date(clubData.ban.expires);
+                if (expiryDate >= new Date()) {
+                    showBanMessage(clubData.ban.reason, clubData.ban.expires);
+                    return; // ここで処理を中断
+                }
+            }
+
             clubNameElement.textContent = `ようこそ！ ${clubData.name} のファンクラブへ`;
             applyCustomStyles(clubData.styles);
             applyCustomLayout(clubData.layout);
-            updateGoodsSection(clubData.goods); // ★追加
+            updateGoodsSection(clubData.goods);
             onAuthStateChanged(auth, updateUser);
         } else {
             showError('指定されたファンクラブは存在しません。');
@@ -168,6 +178,17 @@ function showError(message) {
     actionButton.style.display = 'none';
     errorSection.textContent = message;
     errorSection.style.display = 'block';
+}
+
+// BANメッセージ表示
+function showBanMessage(reason, expires) {
+    document.querySelector('main').innerHTML = `
+        <section style="text-align: center; color: red;">
+            <h2>このファンクラブは利用が制限されています</h2>
+            <p><strong>理由:</strong> ${reason}</p>
+            <p><strong>期限:</strong> ${expires}</p>
+        </section>
+    `;
 }
 
 // イベントリスナー
