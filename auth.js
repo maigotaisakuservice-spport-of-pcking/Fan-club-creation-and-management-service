@@ -82,10 +82,10 @@ if (loginForm) {
 
                 // BAN状態を確認
                 if (userData.ban && userData.ban.isBanned) {
-                    const expiryDate = new Date(userData.ban.expires);
+                    const expiryDate = (userData.ban.expires && userData.ban.expires.toDate) ? userData.ban.expires.toDate() : new Date(userData.ban.expires);
                     if (expiryDate >= new Date()) {
                         // TODO: alertをより良いUI（例: モーダルウィンドウ）に置き換える
-                        alert(`あなたのアカウントはBANされています。\n理由: ${userData.ban.reason}\n期限: ${userData.ban.expires}\n\n5秒後に自動的にログアウトします。`);
+                        alert(`あなたのアカウントはBANされています。\n理由: ${userData.ban.reason}\n期限: ${expiryDate.toLocaleString()}\n\n5秒後に自動的にログアウトします。`);
                         setTimeout(() => {
                             signOut(auth);
                         }, 5000);

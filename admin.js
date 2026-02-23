@@ -44,7 +44,13 @@ async function loadAllUsers() {
             const userData = userDoc.data();
             const userId = userDoc.id;
 
-            const isUserBanned = userData.ban && userData.ban.isBanned && new Date(userData.ban.expires) >= new Date();
+            const checkBanned = (ban) => {
+                if (!ban || !ban.isBanned) return false;
+                const expiry = (ban.expires && ban.expires.toDate) ? ban.expires.toDate() : new Date(ban.expires);
+                return expiry >= new Date();
+            };
+
+            const isUserBanned = checkBanned(userData.ban);
             let rowClass = isUserBanned ? 'banned' : '';
 
             let userBanBtn = isUserBanned
@@ -60,7 +66,7 @@ async function loadAllUsers() {
 
                 if (clubDocSnap.exists()) {
                     const clubData = clubDocSnap.data();
-                    const isClubBanned = clubData.ban && clubData.ban.isBanned && new Date(clubData.ban.expires) >= new Date();
+                    const isClubBanned = checkBanned(clubData.ban);
                     if(isClubBanned) rowClass = 'banned'; // クラブがBANされていても行をハイライト
 
                     clubBanBtn = isClubBanned
@@ -105,7 +111,7 @@ async function handleBan(userId, type) {
     const banData = {
         isBanned: true,
         reason: reason,
-        expires: expires,
+        expires: new Date(expires), // 文字列をDateオブジェクト（Timestamp）に変換
         bannedAt: new Date()
     };
 

@@ -36,12 +36,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             clubData = clubDocSnap.data();
 
             // BAN状態を確認
-            if (clubData.ban && clubData.ban.isBanned) {
-                const expiryDate = new Date(clubData.ban.expires);
-                if (expiryDate >= new Date()) {
-                    showBanMessage(clubData.ban.reason, clubData.ban.expires);
-                    return; // ここで処理を中断
-                }
+            const checkBanned = (ban) => {
+                if (!ban || !ban.isBanned) return false;
+                const expiry = (ban.expires && ban.expires.toDate) ? ban.expires.toDate() : new Date(ban.expires);
+                return { isBanned: expiry >= new Date(), expiry: expiry };
+            };
+
+            const banStatus = checkBanned(clubData.ban);
+            if (banStatus.isBanned) {
+                showBanMessage(clubData.ban.reason, banStatus.expiry.toLocaleString());
+                return; // ここで処理を中断
             }
 
             clubNameElement.textContent = `ようこそ！ ${clubData.name} のファンクラブへ`;
@@ -120,14 +124,20 @@ async function updateUser(user) {
             actionButton.onclick = () => window.location.href = `management.html`;
             return;
         }
-        const clubDocSnap = await getDoc(doc(db, "fanclubs", clubId));
-        const currentData = clubDocSnap.data();
-        const isWinner = currentData.winners && currentData.winners.includes(user.uid);
-        if (isWinner) {
-            actionButton.textContent = '会員限定エリアへ進む';
-            actionButton.onclick = () => showMemberArea(true);
-            return;
+
+        // メンバー限定情報の取得を試みる（当選者のみ可能）
+        try {
+            const privateDocSnap = await getDoc(doc(db, `fanclubs/${clubId}/private`, "content"));
+            if (privateDocSnap.exists()) {
+                actionButton.textContent = '会員限定エリアへ進む';
+                actionButton.onclick = () => showMemberArea(true);
+                return;
+            }
+        } catch (error) {
+            // 権限がない場合は当選者ではないと判断
+            console.log("Not a winner or private content not found");
         }
+
         const applicantDocSnap = await getDoc(doc(db, `fanclubs/${clubId}/applicants`, user.uid));
         if (applicantDocSnap.exists()) {
             actionButton.textContent = '抽選申し込み済み';
@@ -145,9 +155,15 @@ async function updateUser(user) {
 // 会員限定エリア表示とコンテンツ読み込み
 async function showMemberArea(show) {
     if (show) {
-        const clubDocSnap = await getDoc(doc(db, "fanclubs", clubId)); // 最新の情報を再取得
-        const latestClubData = clubDocSnap.data();
-        videoContainer.innerHTML = latestClubData.videoUrl ? `<iframe width="100%" height="315" src="${latestClubData.videoUrl}" frameborder="0" allowfullscreen></iframe>` : '<p>限定動画はありません。</p>';
+        // メンバー限定情報を取得
+        try {
+            const privateDocSnap = await getDoc(doc(db, `fanclubs/${clubId}/private`, "content"));
+            const privateData = privateDocSnap.exists() ? privateDocSnap.data() : {};
+            videoContainer.innerHTML = privateData.videoUrl ? `<iframe width="100%" height="315" src="${privateData.videoUrl}" frameborder="0" allowfullscreen></iframe>` : '<p>限定動画はありません。</p>';
+        } catch (error) {
+            videoContainer.innerHTML = '<p>限定コンテンツの取得に失敗しました。</p>';
+        }
+
         const postsSnapshot = await getDocs(query(collection(db, `fanclubs/${clubId}/posts`), orderBy("createdAt", "desc")));
         postsContainer.innerHTML = '';
         postsSnapshot.forEach(doc => {

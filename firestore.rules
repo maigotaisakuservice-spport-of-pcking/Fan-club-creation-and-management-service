@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // --- ユーティリティ関数 ---
+
+    // ログインしているか
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 管理者か (usersコレクションのlevelフィールドを確認)
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.level == 'admin';
+    }
+
+    // 指定されたデータがBAN状態か
+    function isBanned(data) {
+      return data.keys().contains('ban') &&
+             data.ban.isBanned == true &&
+             request.time < data.ban.expires;
+    }
+
+    // 操作ユーザーがBANされているか
+    function isUserBanned() {
+      return isBanned(get(/databases/$(database)/documents/users/$(request.auth.uid)).data);
+    }
+
+    // 指定されたファンクラブがBANされているか
+    function isClubBanned(clubId) {
+      return isBanned(get(/databases/$(database)/documents/fanclubs/$(clubId)).data);
+    }
+
+    // クリエイターロールを持っているか
+    function isCreator() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'creator';
+    }
+
+    // --- コレクション別ルール ---
+
+    // ユーザー情報
+    match /users/{userId} {
+      // 誰でもログインしていれば閲覧可能（当選者リスト等でメールを表示するため）
+      allow read: if isAuthenticated();
+      // 自身のドキュメントのみ作成・更新可能
+      allow create: if isAuthenticated() && request.auth.uid == userId
+                    && request.resource.data.role in ['creator', 'member'];
+      allow update: if isAdmin() || (
+                      isAuthenticated() && request.auth.uid == userId
+                      && !isUserBanned()
+                      // ロール、権限、BAN情報は自身で変更不可
+                      && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'level', 'ban'])
+                    );
+      allow delete: if isAdmin();
+    }
+
+    // ファンクラブ情報
+    match /fanclubs/{clubId} {
+      // 基本情報は一般公開
+      allow read: if true;
+      // クリエイターのみ自身のIDで作成可能
+      allow create: if isAuthenticated() && request.auth.uid == clubId
+                    && isCreator() && !isUserBanned();
+      // オーナーのみ更新可能（ただしオーナーIDやBAN情報は変更不可）
+      allow update: if isAdmin() || (
+                      isAuthenticated() && request.auth.uid == resource.data.ownerId
+                      && !isUserBanned() && !isClubBanned(clubId)
+                      && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['ownerId', 'ban'])
+                    );
+      allow delete: if isAdmin();
+
+      // 会員限定データ（当選者とオーナー、管理者が閲覧可能）
+      match /private/content {
+        function isWinner() {
+          return isAuthenticated() && request.auth.uid in resource.data.winners;
+        }
+        allow read: if isAdmin() || (isAuthenticated() && (request.auth.uid == clubId || isWinner()));
+        allow write: if isAdmin() || (isAuthenticated() && request.auth.uid == clubId && !isUserBanned() && !isClubBanned(clubId));
+      }
+
+      // 投稿
+      match /posts/{postId} {
+        function isWinner() {
+          // private/contentドキュメントを参照して当選者か確認
+          return isAuthenticated() && request.auth.uid in get(/databases/$(database)/documents/fanclubs/$(clubId)/private/content).data.winners;
+        }
+        allow read: if isAdmin() || (isAuthenticated() && (request.auth.uid == clubId || isWinner()));
+        allow write: if isAdmin() || (isAuthenticated() && request.auth.uid == clubId && !isUserBanned() && !isClubBanned(clubId));
+      }
+
+      // 抽選応募者
+      match /applicants/{applicantId} {
+        // オーナーと管理者のみ閲覧・削除可能
+        allow read, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == clubId);
+        // ログインユーザーが自分自身のIDで応募可能
+        allow create: if isAuthenticated() && request.auth.uid == applicantId
+                      && !isUserBanned() && !isClubBanned(clubId);
+      }
+    }
+  }
+}

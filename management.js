@@ -48,14 +48,19 @@ async function updateManagementPanel(uid) {
     if (!clubDocSnap.exists()) return;
     const clubData = clubDocSnap.data();
 
+    // メンバー限定情報の取得
+    const privateDocRef = doc(db, `fanclubs/${uid}/private`, "content");
+    const privateDocSnap = await getDoc(privateDocRef);
+    const privateData = privateDocSnap.exists() ? privateDocSnap.data() : { winners: [], videoUrl: '' };
+
     // 応募者数
     const applicantsSnapshot = await getDocs(collection(db, `fanclubs/${uid}/applicants`));
     applicantCountSpan.textContent = applicantsSnapshot.size;
 
     // 当選者リスト
     winnerListUl.innerHTML = '';
-    if (clubData.winners && clubData.winners.length > 0) {
-        for (const winnerId of clubData.winners) {
+    if (privateData.winners && privateData.winners.length > 0) {
+        for (const winnerId of privateData.winners) {
             const userDocSnap = await getDoc(doc(db, "users", winnerId));
             if(userDocSnap.exists()) winnerListUl.innerHTML += `<li>${userDocSnap.data().email}</li>`;
         }
@@ -64,7 +69,7 @@ async function updateManagementPanel(uid) {
     }
 
     // コンテンツ情報
-    videoUrlInput.value = clubData.videoUrl || '';
+    videoUrlInput.value = privateData.videoUrl || '';
     const postsSnapshot = await getDocs(query(collection(db, `fanclubs/${uid}/posts`), orderBy("createdAt", "desc"), limit(5)));
     postsListUl.innerHTML = '';
     postsSnapshot.forEach(doc => { postsListUl.innerHTML += `<li>${new Date(doc.data().createdAt.seconds * 1000).toLocaleString()}: ${doc.data().content.substring(0, 50)}...</li>`; });
@@ -136,7 +141,11 @@ createClubForm.addEventListener('submit', async (e) => {
     const user = auth.currentUser;
     if (!clubName || !user) return;
     try {
-        await setDoc(doc(db, "fanclubs", user.uid), { name: clubName, ownerId: user.uid, createdAt: serverTimestamp(), winners: [] });
+        const batch = writeBatch(db);
+        batch.set(doc(db, "fanclubs", user.uid), { name: clubName, ownerId: user.uid, createdAt: serverTimestamp() });
+        batch.set(doc(db, `fanclubs/${user.uid}/private`, "content"), { winners: [], videoUrl: '' });
+        await batch.commit();
+
         // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert(`ファンクラブ「${clubName}」を作成しました！`);
         showManagementPanel(user.uid);
@@ -164,8 +173,8 @@ runLotteryButton.addEventListener('click', async () => {
     }
     const winners = applicants.sort(() => 0.5 - Math.random()).slice(0, num);
     try {
-        await updateDoc(doc(db, "fanclubs", user.uid), { winners: winners });
         const batch = writeBatch(db);
+        batch.set(doc(db, `fanclubs/${user.uid}/private`, "content"), { winners: winners }, { merge: true });
         applicantsSnapshot.forEach(d => batch.delete(d.ref));
         await batch.commit();
         // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
@@ -182,7 +191,7 @@ videoForm.addEventListener('submit', async (e) => {
     const user = auth.currentUser;
     if (!user) return;
     try {
-        await updateDoc(doc(db, "fanclubs", user.uid), { videoUrl: videoUrlInput.value });
+        await setDoc(doc(db, `fanclubs/${user.uid}/private`, "content"), { videoUrl: videoUrlInput.value }, { merge: true });
         // TODO: alertをより良いUI（例: 通知メッセージ）に置き換える
         alert('動画URLを保存しました。');
     } catch (error) {
