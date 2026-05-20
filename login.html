@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン - FanCru</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">FanCru</a></h1>
+        <nav>
+            <button class="hamburger-menu" aria-label="メニューを開く">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li id="nav-signup"><a href="signup.html">新規登録</a></li>
+                <li id="user-menu" style="display: none;">
+                    <div id="user-icon"></div>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div id="auth-form-container">
+            <h2>ログイン</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="メールアドレス" required>
+                <input type="password" id="login-password" placeholder="パスワード" required>
+                <button type="submit">ログイン</button>
+            </form>
+            <p class="auth-switch">
+                <a href="password-reset.html">パスワードをお忘れですか？</a>
+            </p>
+            <p class="auth-switch">
+                アカウントをお持ちでないですか？ <a href="signup.html">新規登録はこちら</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 TekipakiPC</p>
+    </footer>
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

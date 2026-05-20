@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ページ - FanCru</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr.banned {
+            background-color: #ffebee; /* 薄い赤色 */
+        }
+        tr.banned td {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">FanCru</a></h1>
+        <nav>
+            <button class="hamburger-menu" aria-label="メニューを開く">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li id="user-menu" style="display: none;">
+                    <div id="user-icon"></div>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="admin-page" style="display: none;">
+        <section>
+            <h2>管理者ダッシュボード</h2>
+            <p>このページは管理者専用です。</p>
+        </section>
+
+        <section id="user-list-section">
+            <h3>全ユーザーリスト</h3>
+            <table id="user-list-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>UID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list-tbody">
+                    <!-- ユーザーデータがここに挿入されます -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <div id="loading-or-error" style="text-align: center; padding: 2rem;">
+        <p>権限を確認中...</p>
+    </div>
+
+    <footer>
+        <p>© 2025 TekipakiPC</p>
+    </footer>
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
